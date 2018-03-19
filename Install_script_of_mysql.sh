@@ -270,7 +270,7 @@ if [ $N -eq 1 ]
                 max_port=`expr $port + $N - 1`
 		for p in $(seq "$port" "$max_port")
 			do
-				$BASEDIR/bin/mysqld --defaults-file=/etc/my.cnf --initialize --datadir=/data/mysql/$p --basedir=$BASEDIR --user=mysql
+				$BASEDIR/bin/mysqld --defaults-file=/etc/my.cnf --initialize --datadir=/data/mysql/$p --basedir=$BASEDIR --innodb_data_file_path=ibdata1:1024M:autoextend --user=mysql
 			done
 fi
 

@@ -245,43 +245,41 @@ init_env
 
 if [ $N -eq 1 ]
 	then
-		DATADIR=/data/mysql
-		mkdir -p $DATADIR
+        DATADIR=/data/mysql
+        mkdir -p $DATADIR
         rm -rf $DATADIR/*
-		chown -R mysql.mysql $DATADIR
-		chmod 750 $DATADIR
-                SID=$MIN_SID
-		config_single
-		$BASEDIR/bin/mysqld --defaults-file=/etc/my.cnf --initialize --datadir=$DATADIR --basedir=$BASEDIR --user=mysql
-		$BASEDIR/bin/mysqld_safe --defaults-file=/etc/my.cnf &
+        chown -R mysql.mysql $DATADIR
+        chmod 750 $DATADIR
+        SID=$MIN_SID
+        config_single
+        $BASEDIR/bin/mysqld --defaults-file=/etc/my.cnf --initialize --datadir=$DATADIR --basedir=$BASEDIR --user=mysql
+        $BASEDIR/bin/mysqld_safe --defaults-file=/etc/my.cnf &
     else
-		port=3340
-		for sid in $(seq "$MIN_SID" "$MAX_SID")
-			do
-				port=`expr $port + 1`
-				DATADIR=/data/mysql/$port
-                                sock=/tmp/mysql"$port".sock
-				mkdir -p $DATADIR
+        port=3340
+        for sid in $(seq "$MIN_SID" "$MAX_SID")
+            do
+                port=`expr $port + 1`
+                DATADIR=/data/mysql/$port
+                sock=/tmp/mysql"$port".sock
+                mkdir -p $DATADIR
                 rm -rf $DATADIR/*
-				chown -R mysql.mysql $DATADIR
-				chmod 750 $DATADIR
-				config_multi
-			done
-		config_mult_end
-
-                port=3341
-                max_port=`expr $port + $N - 1`
+                chown -R mysql.mysql $DATADIR
+                chmod 750 $DATADIR
+                config_multi
+            done
+        config_mult_end
+        port=3341
+        max_port=`expr $port + $N - 1`
 		for p in $(seq "$port" "$max_port")
-			do
-				$BASEDIR/bin/mysqld --defaults-file=/etc/my.cnf --initialize --datadir=/data/mysql/$p --basedir=$BASEDIR --innodb_data_file_path=ibdata1:1024M:autoextend  --log_error=/data/mysql/$p/mysql.err --user=mysql
+            do
+                $BASEDIR/bin/mysqld --defaults-file=/etc/my.cnf --initialize --datadir=/data/mysql/$p --basedir=$BASEDIR --innodb_data_file_path=ibdata1:1024M:autoextend  --log_error=/data/mysql/$p/mysql.err --user=mysql
                 $BASEDIR/bin/mysqld_multi --defaults-file=/etc/my.cnf start $p
                 sleep 20s
                 PASS=`cat /data/mysql/$p/mysql.err |grep "A temporary password is generated for root@localhost:"|awk  '{print $11}'`
                 echo $PASS
                 read -s -p "PASS: " NEW_PASS
                 $BASEDIR/bin/mysql -uroot -p$PASS --connect-expired-password -e "alter user root@localhost identified by '$NEW_PASS';"
-
-			done
+            done
 fi
 
 

@@ -2,16 +2,16 @@
 
 function init_env()
 {
-	yum -y install libaio
-	groupadd mysql
-	useradd -s /bin/false -r -g mysql  mysql
-	cd /usr/local/src
+    yum -y install libaio
+    groupadd mysql
+    useradd -s /bin/false -r -g mysql  mysql
+    cd /usr/local/src
     wget https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-$DB_VERSION-linux-glibc2.12-x86_64.tar.gz
-	tar -xzf mysql-$DB_VERSION-linux-glibc2.12-x86_64.tar.gz -C ../
-	cd /usr/local/
+    tar -xzf mysql-$DB_VERSION-linux-glibc2.12-x86_64.tar.gz -C ../
+    cd /usr/local/
 #	mv  mysql-5.7.20-linux-glibc2.12-x86_64  mysql-5.7.20
-	chown -R mysql.mysql /usr/local/mysql-$DB_VERSION-linux-glibc2.12-x86_64 
-	ln -s /usr/local/mysql-$DB_VERSION-linux-glibc2.12-x86_64 /usr/local/mysql
+    chown -R mysql.mysql /usr/local/mysql-$DB_VERSION-linux-glibc2.12-x86_64 
+    ln -s /usr/local/mysql-$DB_VERSION-linux-glibc2.12-x86_64 /usr/local/mysql
     mkdir /data/tmp
     chown -R mysql.mysql /data/tmp
     chmod 750 /data/tmp

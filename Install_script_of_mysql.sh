@@ -12,7 +12,9 @@ function init_env()
 #	mv  mysql-5.7.20-linux-glibc2.12-x86_64  mysql-5.7.20
     chown -R mysql.mysql /usr/local/mysql-$DB_VERSION-linux-glibc2.12-x86_64 
     ln -s /usr/local/mysql-$DB_VERSION-linux-glibc2.12-x86_64 /usr/local/mysql
-    mkdir /data/tmp
+    echo 'PATH=$PATH:/usr/local/mysql/bin'>>/etc/profile
+    source /etc/profile
+    mkdir /data/tmp -p
     chown -R mysql.mysql /data/tmp
     chmod 750 /data/tmp
     cat /dev/null>/etc/my.cnf 
@@ -278,7 +280,7 @@ if [ $N -eq 1 ]
                 PASS=`cat /data/mysql/$p/mysql.err |grep "A temporary password is generated for root@localhost:"|awk  '{print $11}'`
                 echo $PASS
                 read -s -p "PASS: " NEW_PASS
-                $BASEDIR/bin/mysql -uroot -p$PASS --connect-expired-password -e "alter user root@localhost identified by '$NEW_PASS';"
+                $BASEDIR/bin/mysql -uroot -p$PASS -S /tmp/mysql$p.sock --connect-expired-password -e "alter user root@localhost identified by '$NEW_PASS';"
             done
 fi
 

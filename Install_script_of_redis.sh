@@ -15,13 +15,14 @@ function init_env()
 function package()
 {
 	cd /usr/local/src/
-	tar -xzf redis-4.0.1.tar.gz -C ../
-	cd ../redis-4.0.1
+    wget http://download.redis.io/releases/redis-$DB_VERSION.tar.gz
+	tar -xzf redis-$DB_VERSION.tar.gz -C ../
+	cd ../redis-$DB_VERSION
 	make
 	useradd redis
-	chown -R redis.redis ../redis-4.0.1
+	chown -R redis.redis ../redis-$DB_VERSION
 	cd ..
-	ln -s redis-4.0.1  redis
+	ln -s redis-$DB_VERSION  redis
 	echo "PATH=$PATH:/usr/local/redis/src" >>/etc/profile
 	source /etc/profile
 }
@@ -95,6 +96,7 @@ BINDIP=`ifconfig |grep -E -A 1  "eth0|lo"|grep inet|awk '{print $2}'|xargs`
 DATADIR=/data/redis
 CONFIG_DIR=/etc/redis
 EX_PORT=17341
+DB_VERSION=$1
 EX_DIR=$DATADIR/$EX_PORT/
 
 read -p "Please enter the number of instance you want to install: " N

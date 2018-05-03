@@ -33,16 +33,14 @@ default-character-set = utf8mb4
 
 [mysqld]
 port = 3341
-socket=/tmp/mysql.sock
+socket = /tmp/mysql.sock
 
 #time
 explicit_defaults_for_timestamp = true
 log_timestamps = SYSTEM
 
-basedir=$BASEDIR
-datadir=$DATADIR
-tmpdir =$TMPDIR
-secure_file_priv=$TMPDIR
+basedir = $BASEDIR
+datadir = $DATADIR
 open_files_limit = 3072
 back_log = 100
 max_connections = 500
@@ -60,56 +58,59 @@ slow_query_log = 1
 slow_query_log_file = $DATADIR/slow.log
 log_error = $DATADIR/mysql.err
 long_query_time = 0.5
-server-id = $SID
-
 pid_file = $DATADIR/mysql.pid
-log_bin = $DATADIR/mysql-bin
-sync_binlog = 1
-relay_log = $DATADIR/mysql-relay-bin
-binlog_cache_size = 2M
-max_binlog_cache_size = 64M
-max_binlog_size = 1024M
-expire_logs_days = 30
 key_buffer_size = 32M
 read_buffer_size = 1M
 read_rnd_buffer_size = 16M
 bulk_insert_buffer_size = 64M
-character-set-server=utf8mb4
+character-set-server = utf8mb4
 default-storage-engine = InnoDB
+
+# safety
+symbolic-links = 0
+tmpdir = $TMPDIR
+secure_file_priv = $TMPDIR
+
+# replication setting
+server-id = $SID
 binlog_format = row
 binlog_row_image = full
+log_bin = $DATADIR/mysql-bin
+sync_binlog = 1
+binlog_cache_size = 2M
+max_binlog_cache_size = 64M
+max_binlog_size = 1024M
+expire_logs_days = 30
+relay_log = $DATADIR/mysql-relay-bin
+relay_log_recovery = 1
+relay_log_info_repository = table
+master_info_repository = table
+replicate_wild_ignore_table = mysql.%
+replicate_wild_ignore_table = information_schema.%
+replicate_wild_ignore_table = performance_schema.%
 
-symbolic-links = 0
-
-relay_log_recovery=1
-replicate_wild_ignore_table=mysql.%
-replicate_wild_ignore_table=information_schema.%
-replicate_wild_ignore_table=performance_schema.%
-
-#GTID
-gtid_mode=on
-log_slave_updates=1
-enforce_gtid_consistency=1
+# GTID
+gtid_mode = on
+log_slave_updates = 1
+enforce_gtid_consistency = 1
 
 #sql_mode: NO_AUTO_CREATE_USER is depricated, it will be removed
-sql_mode = "NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+sql_mode = NO_ENGINE_SUBSTITUTION
 
+# innodb
 transaction_isolation = REPEATABLE-READ
 innodb_buffer_pool_size = $innodb_buffer_pool_size
-innodb_data_home_dir= $DATADIR
+innodb_data_home_dir = $DATADIR
 innodb_data_file_path = ibdata1:1024M:autoextend
 innodb_flush_log_at_trx_commit = 1
 innodb_log_buffer_size = 16M
 innodb_log_file_size = $innodb_log_file_size
 innodb_log_files_in_group = 2
 innodb_max_dirty_pages_pct = 50
-
 innodb_file_per_table = 1
 #innodb_file_format = Barracuda
 innodb_locks_unsafe_for_binlog = 0
-
-
-innodb_stats_include_delete_marked= 1
+innodb_stats_include_delete_marked = 1
 
 #timeout
 interactive_timeout = 320
@@ -129,13 +130,13 @@ config_multi(){
 cat >>/etc/my.cnf <<EOF
 [mysqld$port]
 port = $port
-socket=$sock
+socket = $sock
 
 explicit_defaults_for_timestamp = true
 log_timestamps = SYSTEM
 
-basedir=$BASEDIR
-datadir=$DATADIR
+basedir = $BASEDIR
+datadir = $DATADIR
 open_files_limit = 3072
 back_log = 100
 max_connections = 500
@@ -153,45 +154,47 @@ slow_query_log = 1
 slow_query_log_file = $DATADIR/slow.log
 log_error = $DATADIR/mysql.err
 long_query_time = 0.5
-server-id = $sid
-
 pid_file = $DATADIR/mysql.pid
-log_bin = $DATADIR/mysql-bin
-sync_binlog = 1
-relay_log = $DATADIR/mysql-relay-bin
-binlog_cache_size = 4M
-max_binlog_cache_size = 128M
-max_binlog_size = 1024M
-expire_logs_days = 7
 key_buffer_size = 32M
 read_buffer_size = 1M
 read_rnd_buffer_size = 16M
 bulk_insert_buffer_size = 64M
-character-set-server=utf8mb4
+character-set-server = utf8mb4
 default-storage-engine = InnoDB
-binlog_format = row
 
+# safety
 symbolic-links = 0
 tmpdir = /data/tmp
 secure_file_priv = /data/tmp
 
-relay_log_recovery=1
-replicate_wild_ignore_table=mysql.%
-replicate_wild_ignore_table=information_schema.%
-replicate_wild_ignore_table=test.%
-replicate_wild_ignore_table=sys.%
-
-gtid_mode=on
-log_slave_updates=1
-enforce_gtid_consistency=1
-sql_mode = NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
-
+# replication setting
+server-id = $sid
+log_bin = $DATADIR/mysql-bin
+sync_binlog = 1
+binlog_format = row
+binlog_cache_size = 4M
+max_binlog_cache_size = 128M
+max_binlog_size = 1024M
+expire_logs_days = 7
 relay_log_info_repository = table
 master_info_repository = table
+relay_log = $DATADIR/mysql-relay-bin
+relay_log_recovery = 1
+replicate_wild_ignore_table = mysql.%
+replicate_wild_ignore_table = information_schema.%
+replicate_wild_ignore_table = test.%
+replicate_wild_ignore_table = sys.%
 
+# GTID
+gtid_mode=on
+log_slave_updates = 1
+enforce_gtid_consistency = 1
+sql_mode = NO_ENGINE_SUBSTITUTION
+
+# innodb
 transaction_isolation = REPEATABLE-READ
 innodb_buffer_pool_size = $innodb_buffer_pool_size
-innodb_data_home_dir= $DATADIR
+innodb_data_home_dir = $DATADIR
 innodb_data_file_path = ibdata1:1024M:autoextend
 innodb_flush_log_at_trx_commit = 0
 innodb_log_buffer_size = 16M
@@ -202,7 +205,7 @@ innodb_file_per_table = 1
 #innodb_file_format = Barracuda
 innodb_locks_unsafe_for_binlog = 0
 
-innodb_stats_include_delete_marked= 1
+innodb_stats_include_delete_marked = 1
 
 #timeout
 interactive_timeout = 320
@@ -223,9 +226,9 @@ quick
 max_allowed_packet = 32M
 
 [mysqld_multi]
-mysqld=$BASEDIR/bin/mysqld_safe
-mysqladmin=$BASEDIR/bin/mysqladmin
-log=/data/mysql/mysqld_multi.log
+mysqld = $BASEDIR/bin/mysqld_safe
+mysqladmin = $BASEDIR/bin/mysqladmin
+log = /data/mysql/mysqld_multi.log
 EOF
 }
 
